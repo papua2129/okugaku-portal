@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>尾久小 研究ポータル</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231d1d1f'/%3E%3Ccircle cx='46' cy='16' r='7' fill='%23e8751a'/%3E%3Cpath d='M14 42c11-22 25-27 40-20' fill='none' stroke='%23e8751a' stroke-width='5' stroke-linecap='round'/%3E%3Ctext x='31' y='43' text-anchor='middle' font-family='Arial Black, Arial, sans-serif' font-size='31' font-weight='900' fill='%23fffaf2'%3EG%3C/text%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#1d1d1f',
+            paper: '#fffaf2',
+            warm: '#f5efe3',
+            line: '#ded2bf',
+            orange: '#e8751a',
+            orangeDark: '#b65212'
+          },
+          boxShadow: {
+            calm: '0 18px 50px rgba(63, 45, 24, 0.12)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --header-height: 76px;
+      --space-page: clamp(0.5rem, 1.2vw, 1.25rem);
+      --space-section: clamp(1.25rem, 3.2vw, 3.25rem);
+      --space-card: clamp(1rem, 2vw, 2rem);
+      --space-card-sm: clamp(0.85rem, 1.45vw, 1.4rem);
+      --space-grid: clamp(0.75rem, 1.5vw, 1.5rem);
+      --space-tight: clamp(0.5rem, 1vw, 1rem);
+      --content-max: 1520px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
+      letter-spacing: 0;
+      background:
+        linear-gradient(135deg, rgba(232, 117, 26, 0.08), transparent 34rem),
+        linear-gradient(180deg, #fffaf2 0%, #f6efe3 46%, #fffaf2 100%);
+      color: #1d1d1f;
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition:
+        opacity 760ms ease,
+        transform 760ms cubic-bezier(0.2, 0.72, 0.18, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+      will-change: opacity, transform;
+    }
+
+    .scroll-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scroll-reveal.reveal-left {
+      transform: translateX(-28px);
+    }
+
+    .scroll-reveal.reveal-right {
+      transform: translateX(28px);
+    }
+
+    .scroll-reveal.reveal-left.is-visible,
+    .scroll-reveal.reveal-right.is-visible {
+      transform: translateX(0);
+    }
+
+    a,
+    button,
+    .hover-lift {
+      transition:
+        transform 260ms ease,
+        box-shadow 260ms ease,
+        border-color 260ms ease,
+        background-color 260ms ease,
+        color 260ms ease;
+    }
+
+    a:hover,
+    button:hover,
+    .hover-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 38px rgba(63, 45, 24, 0.16);
+    }
+
+    a:active,
+    button:active,
+    .hover-lift:active {
+      transform: translateY(-1px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .scroll-reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+
+      a,
+      button,
+      .hover-lift {
+        transition: none;
+      }
+
+      a:hover,
+      button:hover,
+      .hover-lift:hover,
+      a:active,
+      button:active,
+      .hover-lift:active {
+        transform: none;
+      }
+    }
+
+    .section-anchor {
+      scroll-margin-top: calc(var(--header-height) + 18px);
+    }
+
+    .page-shell {
+      width: min(100% - (var(--space-page) * 2), var(--content-max));
+      margin-inline: auto;
+      padding-block: var(--space-page);
+    }
+
+    .section-stack {
+      margin-top: var(--space-section);
+    }
+
+    .section-pad {
+      padding: var(--space-card);
+    }
+
+    .card-pad {
+      padding: var(--space-card-sm);
+    }
+
+    .grid-gap {
+      gap: var(--space-grid);
+    }
+
+    .practice-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    }
+
+    .link-grid {
+      align-items: stretch;
+      align-content: stretch;
+    }
+
+    .link-card {
+      position: relative;
+      display: flex;
+      min-height: clamp(13.5rem, 15vw, 17rem);
+      flex-direction: column;
+      overflow: hidden;
+      padding-block: clamp(1rem, 1.25vw, 1.35rem);
+    }
+
+    .link-card::after {
+      content: "";
+      position: absolute;
+      right: -1.2rem;
+      bottom: -0.65rem;
+      width: min(62%, 13rem);
+      height: 5.8rem;
+      background: url("assets/ogaku-logo-transparent.png") center / contain no-repeat;
+      opacity: 0.075;
+      transform: rotate(-4deg);
+      pointer-events: none;
+    }
+
+    .link-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .link-card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .link-card-body p {
+      margin-top: 0.5rem;
+    }
+
+    @media (min-width: 1280px) {
+      .practice-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+    }
+
+    .tight-gap {
+      gap: var(--space-tight);
+    }
+
+    .top-pad {
+      padding: clamp(1.4rem, 3.6vw, 3rem);
+    }
+
+    .top-inner {
+      min-height: clamp(260px, 31vw, 390px);
+      gap: clamp(1.25rem, 3vw, 2.25rem);
+    }
+
+    .hero-logo {
+      width: min(72vw, 860px);
+      filter: drop-shadow(0 28px 36px rgba(232, 117, 26, 0.18));
+      transform: rotate(-1.5deg);
+    }
+
+    .hero-sprint {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .hero-sprint::before,
+    .hero-sprint::after {
+      content: "";
+      position: absolute;
+      height: clamp(0.5rem, 1vw, 0.9rem);
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent 0%, rgba(232, 117, 26, 0.12) 18%, rgba(232, 117, 26, 0.75) 58%, rgba(255, 202, 31, 0.58) 100%);
+      transform: skewX(-18deg);
+    }
+
+    .hero-sprint::before {
+      right: -8%;
+      top: 25%;
+      width: min(62vw, 920px);
+    }
+
+    .hero-sprint::after {
+      right: 8%;
+      bottom: 18%;
+      width: min(48vw, 720px);
+      opacity: 0.66;
+    }
+
+    .hero-dot {
+      position: absolute;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ffcf2b, #e8751a 60%, #b65212);
+      box-shadow: 0 16px 34px rgba(232, 117, 26, 0.25);
+    }
+
+    .hero-dot.one {
+      right: 15%;
+      top: 17%;
+      width: clamp(0.9rem, 1.8vw, 1.6rem);
+      height: clamp(0.9rem, 1.8vw, 1.6rem);
+    }
+
+    .hero-dot.two {
+      right: 30%;
+      bottom: 16%;
+      width: clamp(0.55rem, 1vw, 1rem);
+      height: clamp(0.55rem, 1vw, 1rem);
+      opacity: 0.85;
+    }
+
+    .entrance-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(222, 210, 191, 0.58);
+      border-radius: 1.25rem;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 242, 0.72)),
+        radial-gradient(circle at 92% 8%, rgba(232, 117, 26, 0.09), transparent 34%);
+      box-shadow:
+        0 22px 62px rgba(63, 45, 24, 0.09),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    .entrance-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.54), transparent 42%);
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .entrance-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .entrance-card:hover {
+      border-color: rgba(232, 117, 26, 0.34);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 242, 0.86)),
+        radial-gradient(circle at 92% 8%, rgba(232, 117, 26, 0.13), transparent 34%);
+      box-shadow:
+        0 28px 80px rgba(63, 45, 24, 0.14),
+        0 10px 28px rgba(232, 117, 26, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    .research-board {
+      aspect-ratio: 16 / 9;
+      min-height: 0;
+    }
+
+    .concept-map {
+      font-size: clamp(8px, 0.62vw, 11px);
+      line-height: 1.35;
+    }
+
+    .concept-map * {
+      word-break: keep-all;
+      overflow-wrap: normal;
+      line-break: strict;
+    }
+
+    .concept-map .map-title {
+      font-size: clamp(24px, 2.45vw, 38px);
+    }
+
+    .concept-map .map-logo {
+      font-size: clamp(20px, 2.5vw, 36px);
+    }
+
+    .concept-map .map-card-title {
+      font-size: clamp(14px, 1.05vw, 18px);
+    }
+
+    .concept-map .map-small-title {
+      font-size: clamp(12px, 0.88vw, 15px);
+    }
+
+    .concept-map .map-label {
+      font-size: clamp(11px, 0.82vw, 14px);
+      line-height: 1.2;
+    }
+
+    .concept-map .map-body {
+      font-size: clamp(9px, 0.68vw, 12px);
+      line-height: 1.55;
+    }
+
+    .concept-map .map-list {
+      font-size: clamp(10px, 0.78vw, 13px);
+      line-height: 1.35;
+    }
+
+    .concept-map .block-label {
+      transform: translateY(-50%);
+    }
+
+    .concept-map-inner {
+      position: relative;
+      display: grid;
+      height: 100%;
+      grid-template-rows: auto auto auto auto 1fr;
+      gap: clamp(0.42rem, 0.62vw, 0.72rem);
+    }
+
+    .concept-map-inner::after {
+      content: "O(G)AKU";
+      position: absolute;
+      right: 2.2%;
+      bottom: 1.8%;
+      z-index: 0;
+      font-size: clamp(2.6rem, 5.7vw, 6.4rem);
+      font-style: italic;
+      font-weight: 900;
+      line-height: 1;
+      color: rgba(232, 117, 26, 0.055);
+      pointer-events: none;
+    }
+
+    .concept-map-inner > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .concept-map-bottom {
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    .concept-map-bottom > * {
+      height: 100%;
+    }
+
+    .map-stack-list {
+      display: grid;
+      height: 100%;
+      grid-template-rows: repeat(5, minmax(0, 1fr));
+      gap: clamp(0.22rem, 0.42vw, 0.45rem);
+    }
+
+    .map-stack-list > * {
+      display: flex;
+      align-items: center;
+      min-height: 0;
+    }
+
+    .map-pillar-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: clamp(3.6rem, 5.4vw, 5.2rem);
+    }
+
+    .map-pillar-card .map-label {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    .map-bulb-icon {
+      padding: 0.18rem;
+      overflow: visible;
+    }
+
+    .map-bulb-icon svg {
+      overflow: visible;
+    }
+
+    .map-row-icon {
+      display: grid;
+      width: clamp(1.15rem, 1.35vw, 1.55rem);
+      height: clamp(1.15rem, 1.35vw, 1.55rem);
+      flex: 0 0 auto;
+      place-items: center;
+      color: #e8751a;
+      opacity: 0.95;
+    }
+
+    .map-row-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .map-list-text {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .lecture-panel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lecture-panel::after {
+      content: "O(G)AKU";
+      position: absolute;
+      left: clamp(1.2rem, 2vw, 2rem);
+      bottom: clamp(0.9rem, 1.6vw, 1.5rem);
+      z-index: 0;
+      font-size: clamp(3.2rem, 7vw, 7.4rem);
+      font-style: italic;
+      font-weight: 900;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.045);
+      pointer-events: none;
+    }
+
+    .lecture-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .concept-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-link.active {
+      background: #1d1d1f;
+      color: #fffaf2;
+      border-color: #1d1d1f;
+    }
+
+    .link-card[data-status="placeholder"] .status-dot {
+      background: #b65212;
+    }
+
+    .connector::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      width: 2px;
+      height: 22px;
+      background: #d6c4aa;
+      transform: translateX(-50%);
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --header-height: 68px;
+        --space-section: clamp(1.1rem, 4.6vw, 2rem);
+        --space-card: clamp(0.9rem, 3.6vw, 1.45rem);
+        --space-card-sm: clamp(0.8rem, 3vw, 1.15rem);
+        --space-grid: clamp(0.7rem, 3vw, 1.1rem);
+      }
+
+      .research-board {
+        aspect-ratio: auto;
+        min-height: 0;
+      }
+
+      .concept-map-inner {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .concept-map-inner::after,
+      .lecture-panel::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --space-page: 0.45rem;
+        --space-section: 1rem;
+      }
+
+      .top-inner {
+        min-height: clamp(230px, 74vw, 320px);
+      }
+
+      .hero-logo {
+        width: min(92vw, 620px);
+      }
+
+      .hero-sprint::before {
+        right: -38%;
+        top: 18%;
+        width: 95vw;
+      }
+
+      .hero-sprint::after {
+        right: -22%;
+        bottom: 16%;
+        width: 82vw;
+      }
+    }
+
+    @media print {
+      header,
+      .no-print {
+        display: none !important;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      main {
+        max-width: none !important;
+        padding: 0 !important;
+      }
+
+      section {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <script>
+    /*
+      リンク差し替え場所
+      実際のGoogle Drive、Googleフォーム、スプレッドシート等のURLを受け取ったら、
+      下の url: "#" を差し替えてください。
+    */
+    const portalLinks = {
+      discussion: [
+        { title: '学習指導案', detail: '研究授業のねらい、単元構想、手立て、見取りを確認する資料', url: 'https://docs.google.com/document/d/1auQ9aITn_kqAiYMnrZYsiWJeTvDUI220h5r9mogsfNE/edit?usp=sharing', type: 'Google Docs' },
+        { title: '協議記録フォーム', detail: '授業を見て考えたことを短く入力するフォーム', url: 'https://forms.gle/TVsP7DgBgVbwVj4j7', type: 'Google Form' },
+        { title: 'IFSまとめ', detail: '協議記録フォームで先生方が送った内容をスプレッドシートで確認', url: 'https://docs.google.com/spreadsheets/d/1hKR8dlQV64H5h0wR2jIvarETh62ICkWzeWfKuykYj4U/edit?usp=sharing', type: 'Google Sheets' }
+      ],
+      practices: [
+        { title: '低学年 生活科実践', detail: '生活科を中核にした低学年教育や、地域とつながる生活科の研究成果', url: 'https://www.nier.go.jp/kaihatsu/shiteikou/shiteikou-seikahoukoku-pri_seikat.html', type: '国研' },
+        { title: '中学年 総合実践', detail: '地域資源の活用、探究的な学び、課題解決に関する小学校総合の研究成果', url: 'https://www.nier.go.jp/kaihatsu/shiteikou/shiteikou_seikahoukoku_pri_sougo.html', type: '国研' },
+        { title: '高学年 総合実践', detail: '第6学年の総合的な学習の時間に関する文部科学省の実践事例', url: 'https://www.mext.go.jp/a_menu/shotou/zyouhou/mext_00011.html', type: '文科省' },
+        { title: '教科横断の実践', detail: '自己評価、振り返り、話合い、教科横断的な学習を支える東京都の研究報告', url: 'https://www.kyoiku-kensyu.metro.tokyo.lg.jp/09seika/reports/kenkyuin/sho/sou.html', type: '東京都' },
+        { title: 'O(G)AKU 3G探9 GPTs', detail: '尾久小学校の研究内容をもとに、教材研究や授業研究の相談相手として活用できます。', url: 'https://chatgpt.com/g/g-69f7c43a26588191950bec1a3ddc6919-okukaku-3gtan-9', type: 'ChatGPT' }
+      ],
+      exchange: [
+        { title: '研究推進委員会', detail: '研究推進委員会の皆さんは、こちらから資料を確認してください。', url: 'https://docs.google.com/document/d/1Z28_L3JxanO79vORUW-XmO4rcLMiHkVjRdh6jfHGfTY/edit?usp=sharing', type: 'Google Docs' },
+        { title: '実践一覧スプレッドシート', detail: '各学年の総合的・横断的な実践を一覧で確認できます。', url: 'https://docs.google.com/spreadsheets/d/1MyrHOCylcXHfB5IVu5ezQMBs0C9vzb8DCgHTRtiedQY/edit?usp=sharing', type: 'Google Sheets' },
+        { title: '研究全体会資料', detail: '研究全体会で共有した、教職員の共通理解を図る資料です。', url: 'https://canva.link/7a0heub3zk1xxsa', type: 'Canva' }
+      ]
+    };
+  </script>
+
+  <header class="sticky top-0 z-40 border-b border-line/80 bg-paper/92 backdrop-blur">
+    <div class="mx-auto flex h-[var(--header-height)] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <a href="#top" class="group flex items-center gap-3">
+        <div class="grid h-11 w-11 place-items-center rounded-md bg-ink text-sm font-black tracking-normal text-paper">OG</div>
+        <div class="leading-tight">
+          <p class="text-sm font-black text-ink">尾久小学校 校内研究</p>
+          <p class="text-xs font-semibold text-neutral-600">研究情報を一元化する玄関口</p>
+        </div>
+      </a>
+      <nav class="hidden items-center gap-2 lg:flex" aria-label="主要ナビゲーション">
+        <a class="nav-link rounded-md border border-line px-3 py-2 text-sm font-bold text-neutral-700 transition hover:border-ink hover:text-ink" href="#top">トップ</a>
+        <a class="nav-link rounded-md border border-line px-3 py-2 text-sm font-bold text-neutral-700 transition hover:border-ink hover:text-ink" href="#concept">研究構想</a>
+        <a class="nav-link rounded-md border border-line px-3 py-2 text-sm font-bold text-neutral-700 transition hover:border-ink hover:text-ink" href="#practices">実践</a>
+        <a class="nav-link rounded-md border border-line px-3 py-2 text-sm font-bold text-neutral-700 transition hover:border-ink hover:text-ink" href="#discussion">協議会</a>
+        <a class="nav-link rounded-md border border-line px-3 py-2 text-sm font-bold text-neutral-700 transition hover:border-ink hover:text-ink" href="#exchange">研究推進資料</a>
+      </nav>
+      <button id="mobileMenuButton" class="rounded-md border border-line px-4 py-2 text-sm font-black text-ink lg:hidden" type="button" aria-expanded="false" aria-controls="mobileMenu">
+        メニュー
+      </button>
+    </div>
+    <nav id="mobileMenu" class="hidden border-t border-line bg-paper px-4 pb-4 lg:hidden" aria-label="スマホ用ナビゲーション">
+      <div class="grid gap-2 pt-3">
+        <a class="rounded-md border border-line px-4 py-3 font-bold" href="#top">トップ</a>
+        <a class="rounded-md border border-line px-4 py-3 font-bold" href="#concept">研究構想</a>
+        <a class="rounded-md border border-line px-4 py-3 font-bold" href="#practices">実践</a>
+        <a class="rounded-md border border-line px-4 py-3 font-bold" href="#discussion">協議会</a>
+        <a class="rounded-md border border-line px-4 py-3 font-bold" href="#exchange">研究推進資料</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section id="top" class="section-anchor overflow-hidden rounded-md border border-line bg-white shadow-calm">
+      <div class="relative top-pad">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(255,202,31,0.22),transparent_28%),linear-gradient(135deg,#fffaf2_0%,#ffffff_45%,#fff4df_100%)]"></div>
+        <div class="hero-sprint">
+          <span class="hero-dot one"></span>
+          <span class="hero-dot two"></span>
+        </div>
+        <div class="top-inner relative grid items-center gap-[var(--space-grid)] lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="max-w-4xl">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="rounded-md bg-orange px-4 py-2 text-sm font-black text-white">令和8年度</span>
+              <span class="rounded-md border border-line bg-white/78 px-4 py-2 text-sm font-bold text-neutral-700 backdrop-blur">尾久小学校 校内研究ポータル</span>
+            </div>
+
+            <div class="mt-[var(--space-grid)]">
+              <p class="text-sm font-black uppercase tracking-[0.24em] text-orangeDark">Research Theme</p>
+              <h1 class="mt-[var(--space-tight)] text-[clamp(2.1rem,6vw,4.5rem)] font-black leading-tight text-ink">
+                地域を起点に、<br>
+                自ら問い、<br>
+                学びを深める<br class="hidden sm:block">
+                授業づくり
+              </h1>
+              <p class="mt-[var(--space-tight)] max-w-3xl text-base font-bold leading-7 text-neutral-700 sm:text-lg">
+                研究構想・実践・協議・共有リンクをつなぐ、尾久小学校の校内研究ポータル。
+              </p>
+            </div>
+          </div>
+
+          <div class="relative flex min-h-[220px] items-center justify-center lg:min-h-[320px]">
+            <div class="absolute right-0 top-8 h-28 w-28 rounded-full border border-orange/20 bg-orange/5"></div>
+            <div class="absolute bottom-8 left-10 h-16 w-16 rounded-full bg-yellow-300/25 blur-sm"></div>
+            <img class="hero-logo relative z-10" src="assets/ogaku-logo-transparent.png" alt="O(G)AKU 3G探9 ロゴ">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-anchor section-stack section-pad rounded-md border border-line bg-white shadow-calm" aria-labelledby="three-g-title">
+      <div class="mb-[var(--space-grid)] flex flex-col justify-between tight-gap lg:flex-row lg:items-end">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.22em] text-orangeDark">Three Gs</p>
+          <h2 id="three-g-title" class="mt-2 text-4xl font-black leading-tight text-ink lg:text-5xl">3つの柱</h2>
+        </div>
+        <div class="rounded-md bg-ink px-5 py-4 text-right text-paper">
+          <p class="text-3xl font-black italic leading-none">O<span class="text-orange">(G)</span>AKU</p>
+          <p class="mt-1 text-sm font-black text-orange">3G探9</p>
+        </div>
+      </div>
+      <div class="grid grid-gap lg:grid-cols-3">
+        <article class="group card-pad rounded-md border border-line bg-paper transition hover:-translate-y-1 hover:border-orange hover:bg-white hover:shadow-calm">
+          <div class="mb-6 flex items-center justify-between gap-4">
+            <div class="grid h-16 w-16 place-items-center rounded-md bg-orange text-2xl font-black text-white">G</div>
+            <span class="rounded-md bg-white px-3 py-1.5 text-xs font-black text-orangeDark">たくましい子</span>
+          </div>
+          <h3 class="text-3xl font-black text-ink">Ground</h3>
+          <p class="mt-3 text-lg font-bold text-orangeDark">地域・現場・実体験</p>
+          <p class="mt-4 leading-7 text-neutral-700">地域や学校の本物との出合いから、問いの芽が生まれる。</p>
+        </article>
+        <article class="group card-pad rounded-md border border-line bg-paper transition hover:-translate-y-1 hover:border-orange hover:bg-white hover:shadow-calm">
+          <div class="mb-6 flex items-center justify-between gap-4">
+            <div class="grid h-16 w-16 place-items-center rounded-md bg-ink text-2xl font-black text-paper">G</div>
+            <span class="rounded-md bg-white px-3 py-1.5 text-xs font-black text-orangeDark">やさしい子</span>
+          </div>
+          <h3 class="text-3xl font-black text-ink">Group</h3>
+          <p class="mt-3 text-lg font-bold text-orangeDark">対話・協働・関わり</p>
+          <p class="mt-4 leading-7 text-neutral-700">友達や地域の人との関わりを通して、問いや考えを磨く。</p>
+        </article>
+        <article class="group card-pad rounded-md border border-line bg-paper transition hover:-translate-y-1 hover:border-orange hover:bg-white hover:shadow-calm">
+          <div class="mb-6 flex items-center justify-between gap-4">
+            <div class="grid h-16 w-16 place-items-center rounded-md border-2 border-orange bg-white text-2xl font-black text-orangeDark">G</div>
+            <span class="rounded-md bg-white px-3 py-1.5 text-xs font-black text-orangeDark">進んで学ぶ子</span>
+          </div>
+          <h3 class="text-3xl font-black text-ink">Growth</h3>
+          <p class="mt-3 text-lg font-bold text-orangeDark">変容・自覚・次の学び</p>
+          <p class="mt-4 leading-7 text-neutral-700">見方や考えの変化を自覚し、次の問いへ進んでいく。</p>
+        </article>
+      </div>
+      <div class="mt-5 grid overflow-hidden rounded-md border border-line text-center text-sm font-black sm:grid-cols-3">
+        <div class="bg-orange px-3 py-3 text-white">出合い</div>
+        <div class="bg-ink px-3 py-3 text-paper">対話</div>
+        <div class="bg-white px-3 py-3 text-orangeDark">変容</div>
+      </div>
+    </section>
+
+    <section class="section-anchor section-stack" aria-labelledby="hub-title">
+      <div class="mb-[var(--space-tight)] flex flex-col justify-between tight-gap sm:flex-row sm:items-end">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Entrance</p>
+          <h2 id="hub-title" class="text-3xl font-black text-ink">研究の入口</h2>
+        </div>
+        <p class="max-w-2xl text-sm leading-6 text-neutral-700">各カードから、構想の確認、実践の参照、協議会シート、研究推進資料へ移動できます。</p>
+      </div>
+      <div class="grid grid-gap md:grid-cols-2 xl:grid-cols-3">
+        <a class="entrance-card group card-pad block transition hover:-translate-y-0.5" href="#concept">
+          <span class="rounded-md bg-ink px-3 py-1 text-xs font-black text-paper">構想</span>
+          <h3 class="mt-4 text-xl font-black text-ink">研究構想に触れる</h3>
+          <p class="mt-2 leading-7 text-neutral-700">研究主題、研究仮説、5つの手立て、検証の視点を確認します。</p>
+        </a>
+        <a class="entrance-card group card-pad block transition hover:-translate-y-0.5" href="#board">
+          <span class="rounded-md bg-ink px-3 py-1 text-xs font-black text-paper">図解</span>
+          <h3 class="mt-4 text-xl font-black text-ink">研究構想図</h3>
+          <p class="mt-2 leading-7 text-neutral-700">研究の全体像を一目で確認できます。</p>
+        </a>
+        <a class="entrance-card group card-pad block transition hover:-translate-y-0.5" href="#discussion">
+          <span class="rounded-md bg-ink px-3 py-1 text-xs font-black text-paper">協議</span>
+          <h3 class="mt-4 text-xl font-black text-ink">研究授業</h3>
+          <p class="mt-2 leading-7 text-neutral-700">学習指導案、協議記録フォーム、IFSまとめへの入口をまとめます。</p>
+        </a>
+        <a class="entrance-card group card-pad block transition hover:-translate-y-0.5" href="#practices">
+          <span class="rounded-md bg-ink px-3 py-1 text-xs font-black text-paper">実践</span>
+          <h3 class="mt-4 text-xl font-black text-ink">実践を見る</h3>
+          <p class="mt-2 leading-7 text-neutral-700">学年別、教科領域別に、ウェブ上の実践や校内資料へアクセスします。</p>
+        </a>
+        <a class="entrance-card group card-pad block transition hover:-translate-y-0.5" href="#exchange">
+          <span class="rounded-md bg-ink px-3 py-1 text-xs font-black text-paper">共有</span>
+          <h3 class="mt-4 text-xl font-black text-ink">研究推進資料</h3>
+          <p class="mt-2 leading-7 text-neutral-700">推進委員会、実践一覧、研究全体会資料への入口をまとめます。</p>
+        </a>
+      </div>
+    </section>
+
+    <section id="concept" class="section-anchor section-stack section-pad rounded-md border border-line bg-white shadow-calm">
+      <div class="grid grid-gap lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Concept</p>
+          <h2 class="mt-2 text-3xl font-black leading-tight text-ink">研究構想に触れる</h2>
+          <p class="mt-4 leading-8 text-neutral-700">
+            この研究は、地域を単なる題材として扱うのではなく、児童が問いを育て、学びを自分事として深めていく授業づくりを対象にします。
+          </p>
+          <button id="summaryButton" class="mt-5 rounded-md bg-orange px-5 py-3 font-black text-white transition hover:bg-orangeDark" type="button" aria-expanded="false" aria-controls="summaryPanel">
+            1分説明を表示
+          </button>
+          <div id="summaryPanel" class="mt-4 hidden rounded-md border border-orange/40 bg-orange/10 p-4 text-sm leading-7 text-neutral-800">
+            尾久小学校の校内研究では、地域や学校の人・もの・こととの出合いを学びの出発点にします。そこで生まれた素朴な疑問や違和感を、対話、体験、調査、振り返りを通して問いへ育てます。大切にしたいのは、地域について知るだけで終わらせず、問いや考え、見方、自分との関わりが更新される授業づくりです。
+          </div>
+        </div>
+        <div class="grid grid-gap md:grid-cols-3">
+          <article class="card-pad rounded-md border border-line bg-paper">
+            <p class="text-sm font-black text-orangeDark">01</p>
+            <h3 class="mt-2 text-xl font-black text-ink">地域を起点に</h3>
+            <p class="mt-3 leading-7 text-neutral-700">地域や学校の人・もの・こととの本物の出合いから学びを始める。</p>
+          </article>
+          <article class="card-pad rounded-md border border-line bg-paper">
+            <p class="text-sm font-black text-orangeDark">02</p>
+            <h3 class="mt-2 text-xl font-black text-ink">自ら問い</h3>
+            <p class="mt-3 leading-7 text-neutral-700">素朴な疑問や違和感を、体験・対話・調査・振り返りで問いへ育てる。</p>
+          </article>
+          <article class="card-pad rounded-md border border-line bg-paper">
+            <p class="text-sm font-black text-orangeDark">03</p>
+            <h3 class="mt-2 text-xl font-black text-ink">学びを深める</h3>
+            <p class="mt-3 leading-7 text-neutral-700">問い・考え・見方・自分との関わりが更新される学びを目指す。</p>
+          </article>
+        </div>
+      </div>
+
+      <div class="mt-[var(--space-grid)] card-pad rounded-md border border-line bg-ink text-paper">
+        <p class="text-sm font-black uppercase tracking-[0.18em] text-orange">Hypothesis</p>
+        <h3 class="mt-2 text-2xl font-black">研究仮説</h3>
+        <p class="mt-4 text-base leading-8 text-neutral-100">
+          地域や学校の人・もの・こととの出合い方を工夫し、児童の中に生まれた素朴な疑問や関心を、対話や体験、振り返りを通して問いへと育てていく学習過程を設定すれば、児童は自ら問い、地域との関わりを自分事として捉えながら、学びを深めていくことができるであろう。
+        </p>
+      </div>
+    </section>
+
+    <section id="board" class="section-anchor section-stack">
+      <div class="mb-[var(--space-tight)] flex flex-col justify-between tight-gap lg:flex-row lg:items-end">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Research Map</p>
+          <h2 class="text-3xl font-black text-ink">研究構想図</h2>
+        </div>
+        <p class="max-w-3xl text-sm leading-6 text-neutral-700">研究主題、仮説、手立て、検証の視点を一枚で見通すための図解です。</p>
+      </div>
+      <div class="research-board concept-map overflow-hidden rounded-md border-2 border-orange bg-white p-[clamp(0.45rem,0.8vw,0.85rem)] shadow-calm">
+        <div class="concept-map-inner">
+          <div class="flex shrink-0 items-start justify-between gap-4">
+            <div class="min-w-0">
+              <p class="map-small-title font-black text-ink">尾久小学校　校内研究構想図</p>
+              <div class="mt-2 flex items-center gap-3">
+                <span class="map-card-title shrink-0 rounded-md bg-orange px-3 py-1.5 font-black text-white">研究主題</span>
+                <h3 class="map-title font-black leading-tight text-ink">
+                  地域を起点に、自ら問い、学びを深める授業づくり
+                </h3>
+              </div>
+              <div class="mt-2 h-1 w-[72%] rounded-full bg-orange"></div>
+            </div>
+            <div class="shrink-0 text-right">
+              <p class="map-logo font-black italic leading-none text-orange">O(G)AKU</p>
+              <p class="map-small-title font-black text-orangeDark">3G探9</p>
+            </div>
+          </div>
+
+          <div class="grid shrink-0 gap-2.5 lg:grid-cols-[1.08fr_1.5rem_0.92fr] lg:items-stretch">
+            <div class="grid gap-2.5 md:grid-cols-3">
+              <div class="map-pillar-card relative rounded-md border border-orange/50 bg-paper px-3 pb-2 pt-6 text-center">
+                <div class="absolute left-1/2 top-0 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-orange bg-white text-orange">
+                  <span class="concept-icon block h-6 w-6"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg></span>
+                </div>
+                <p class="map-card-title font-black text-orange">Ground</p>
+                <p class="map-label mt-0.5 font-bold text-ink">地域に根ざす</p>
+              </div>
+              <div class="map-pillar-card relative rounded-md border border-orange/50 bg-paper px-3 pb-2 pt-6 text-center">
+                <div class="absolute left-1/2 top-0 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-orange bg-white text-orange">
+                  <span class="concept-icon block h-6 w-6"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M3.5 20c.8-4 3.2-6 6.5-6"/><path d="M20.5 20c-.8-4-3.2-6-6.5-6"/></svg></span>
+                </div>
+                <p class="map-card-title font-black text-orange">Group</p>
+                <p class="map-label mt-0.5 font-bold text-ink">対話・協働で考える</p>
+              </div>
+              <div class="map-pillar-card relative rounded-md border border-orange/50 bg-paper px-3 pb-2 pt-6 text-center">
+                <div class="absolute left-1/2 top-0 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-orange bg-white text-orange">
+                  <span class="concept-icon block h-6 w-6"><svg viewBox="0 0 24 24"><path d="M12 21V10"/><path d="M12 10c-4.5 0-7-2.5-7-7 4.5 0 7 2.5 7 7Z"/><path d="M12 13c4.5 0 7-2.5 7-7-4.5 0-7 2.5-7 7Z"/></svg></span>
+                </div>
+                <p class="map-card-title font-black text-orange">Growth</p>
+                <p class="map-label mt-0.5 font-bold text-ink">学びの深まりと成長</p>
+              </div>
+            </div>
+            <div class="hidden place-items-center text-3xl font-black text-orange lg:grid">▶</div>
+            <div class="rounded-md border border-orange bg-paper p-2.5">
+              <p class="mx-auto w-fit rounded-md bg-orange px-4 py-1 map-label font-black text-white">学校教育目標</p>
+              <div class="mt-2 grid grid-cols-3 divide-x divide-orange/30 rounded-md bg-white text-center">
+                <div class="p-2">
+                  <span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z"/></svg></span>
+                  <p class="map-label mt-1 font-black text-ink">進んで学ぶ子</p>
+                </div>
+                <div class="p-2">
+                  <span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></span>
+                  <p class="map-label mt-1 font-black text-ink">やさしい子</p>
+                </div>
+                <div class="p-2">
+                  <span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><path d="M13 4h3l-2 5h3l-5 11v-7H9l4-9Z"/><path d="M5 21h14"/></svg></span>
+                  <p class="map-label mt-1 font-black text-ink">たくましい子</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid shrink-0 gap-2.5 lg:grid-cols-[1.16fr_0.84fr]">
+            <div class="relative rounded-md border border-orange/60 bg-white p-2.5 pt-4">
+              <p class="block-label absolute left-3 top-0 rounded-md bg-orange px-2.5 py-0.5 map-label font-black text-white">1　主題に込めた思い</p>
+              <div class="grid gap-2 md:grid-cols-3">
+                <div class="grid grid-cols-[3rem_1fr] items-center gap-2 rounded-md border border-orange/30 bg-paper p-2">
+                  <span class="concept-icon block h-10 w-10 text-orange"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg></span>
+                  <div><p class="map-card-title font-black text-orange">地域を起点に</p><p class="map-body mt-0.5 text-ink">地域や学校を学びの出発点にする。</p></div>
+                </div>
+                <div class="grid grid-cols-[3rem_1fr] items-center gap-2 rounded-md border border-orange/30 bg-paper p-2">
+                  <span class="concept-icon map-bulb-icon block h-10 w-10 text-orange"><svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M2 10a10 10 0 1 1 20 0c0 3.2-1.6 5-3.6 6.8-.9.8-1.4 1.8-1.4 3.2H7c0-1.4-.5-2.4-1.4-3.2C3.6 15 2 13.2 2 10Z"/></svg></span>
+                  <div><p class="map-card-title font-black text-orange">自ら問い</p><p class="map-body mt-0.5 text-ink">素朴な疑問を大切にし、問いを磨く。</p></div>
+                </div>
+                <div class="grid grid-cols-[3rem_1fr] items-center gap-2 rounded-md border border-orange/30 bg-paper p-2">
+                  <span class="concept-icon block h-10 w-10 text-orange"><svg viewBox="0 0 24 24"><path d="M3 17h4v4H3z"/><path d="M10 13h4v8h-4z"/><path d="M17 7h4v14h-4z"/><path d="m4 11 5-5 4 4 7-7"/></svg></span>
+                  <div><p class="map-card-title font-black text-orange">学びを深める</p><p class="map-body mt-0.5 text-ink">見方を広げ、自分との関わりを捉え直す。</p></div>
+                </div>
+              </div>
+            </div>
+            <div class="relative rounded-md border border-orange/60 bg-white p-2.5 pt-4">
+              <p class="block-label absolute left-3 top-0 rounded-md bg-orange px-2.5 py-0.5 map-label font-black text-white">2　研究仮説</p>
+              <div class="grid grid-cols-[3.5rem_1fr] items-center gap-2.5 rounded-md bg-paper p-2.5">
+                <span class="concept-icon map-bulb-icon block h-11 w-11 text-orange"><svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M2 10a10 10 0 1 1 20 0c0 3.2-1.6 5-3.6 6.8-.9.8-1.4 1.8-1.4 3.2H7c0-1.4-.5-2.4-1.4-3.2C3.6 15 2 13.2 2 10Z"/></svg></span>
+                <p class="map-body font-bold text-ink">出合いを工夫し、素朴な疑問を対話・体験・振り返りを通して問いへ育てる学習過程を設定する。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative shrink-0 rounded-md border border-orange/60 bg-white p-2.5 pt-4">
+            <p class="block-label absolute left-3 top-0 rounded-md bg-orange px-2.5 py-0.5 map-label font-black text-white">3　探究の学習過程</p>
+            <div class="grid gap-1.5 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr] md:items-stretch">
+              <div class="rounded-md border border-orange/40 bg-paper p-2 text-center"><span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M4 21c.5-4 3-6 6-6"/><path d="M20 21c-.5-4-3-6-6-6"/></svg></span><p class="map-small-title mt-0.5 font-black text-orange">出合う</p></div>
+              <div class="hidden place-items-center text-2xl font-black text-orange md:grid">▶</div>
+              <div class="rounded-md border border-orange/40 bg-paper p-2 text-center"><span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M12 14h.01"/><path d="M12 7a2.4 2.4 0 0 1 1.4 4.3c-.8.5-1.4 1-1.4 2"/></svg></span><p class="map-small-title mt-0.5 font-black text-orange">問いをもつ</p></div>
+              <div class="hidden place-items-center text-2xl font-black text-orange md:grid">▶</div>
+              <div class="rounded-md border border-orange/40 bg-paper p-2 text-center"><span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span><p class="map-small-title mt-0.5 font-black text-orange">調べる</p></div>
+              <div class="hidden place-items-center text-2xl font-black text-orange md:grid">▶</div>
+              <div class="rounded-md border border-orange/40 bg-paper p-2 text-center"><span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 17v-5"/><path d="M12 17V8"/><path d="M16 17v-8"/><path d="M20 17v-3"/></svg></span><p class="map-small-title mt-0.5 font-black text-orange">整理・分析</p></div>
+              <div class="hidden place-items-center text-2xl font-black text-orange md:grid">▶</div>
+              <div class="rounded-md border border-orange/40 bg-paper p-2 text-center"><span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 18h4"/></svg></span><p class="map-small-title mt-0.5 font-black text-orange">まとめ・表現</p></div>
+              <div class="hidden place-items-center text-2xl font-black text-orange md:grid">▶</div>
+              <div class="rounded-md border border-orange/40 bg-paper p-2 text-center"><span class="concept-icon mx-auto block h-7 w-7 text-orange"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span><p class="map-small-title mt-0.5 font-black text-orange">次の問いへ</p></div>
+            </div>
+          </div>
+
+          <div class="concept-map-bottom grid gap-2 lg:grid-cols-[1.05fr_0.24fr_1.05fr_0.55fr]">
+            <div class="relative rounded-md border border-orange/60 bg-white p-2.5 pt-4">
+              <p class="block-label absolute left-3 top-0 rounded-md bg-orange px-2.5 py-0.5 map-label font-black text-white">4　具体的な手立て</p>
+              <ol class="map-stack-list">
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">1</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg></span><span class="map-list-text font-bold text-ink">本物と出合う場をつくる</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">2</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M12 14h.01"/><path d="M12 7a2.4 2.4 0 0 1 1.4 4.3c-.8.5-1.4 1-1.4 2"/></svg></span><span class="map-list-text font-bold text-ink">素朴な問いを磨く時間を確保する</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">3</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 17v-5"/><path d="M12 17V8"/><path d="M16 17v-8"/></svg></span><span class="map-list-text font-bold text-ink">探究の過程を意識して設計する</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">4</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8"/><path d="M8 13h5"/><path d="M8 17h7"/></svg></span><span class="map-list-text font-bold text-ink">学び方を具体的に支える</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">5</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v6h-6"/></svg></span><span class="map-list-text font-bold text-ink">振り返りを次へつなぐ</span></li>
+              </ol>
+            </div>
+            <div class="grid place-items-center rounded-md bg-orange/10 px-2 py-3 text-center">
+              <div>
+                <div class="mx-auto grid h-12 w-12 place-items-center rounded-full border-4 border-orange text-orange">
+                  <span class="text-2xl font-black">↻</span>
+                </div>
+                <p class="map-list mt-1.5 font-black text-orangeDark">実践と検証の往還</p>
+              </div>
+            </div>
+            <div class="relative rounded-md border border-orange/60 bg-white p-2.5 pt-4">
+              <p class="block-label absolute left-3 top-0 rounded-md bg-orange px-2.5 py-0.5 map-label font-black text-white">5　検証の視点</p>
+              <ol class="map-stack-list">
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">1</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 21s7-5.4 7-11a7 7 0 0 0-14 0c0 5.6 7 11 7 11Z"/></svg></span><span class="map-list-text font-bold text-ink">出合いから問いをもてたか</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">2</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M4 17h4v4H4z"/><path d="M10 13h4v8h-4z"/><path d="M16 7h4v14h-4z"/></svg></span><span class="map-list-text font-bold text-ink">問いは深まり、変容しているか</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">3</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21c.8-4 3-6 6-6s5.2 2 6 6"/></svg></span><span class="map-list-text font-bold text-ink">学びを自分事として捉えているか</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">4</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M4 21c.6-4 3-6 6-6"/><path d="M20 21c-.6-4-3-6-6-6"/></svg></span><span class="map-list-text font-bold text-ink">対話や協働で深めているか</span></li>
+                <li class="flex items-center gap-2.5 rounded-md border border-orange/25 bg-paper px-2 py-1 map-list"><span class="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange font-black text-white">5</span><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg></span><span class="map-list-text font-bold text-ink">振り返りで深まりを自覚しているか</span></li>
+              </ol>
+            </div>
+            <div class="relative rounded-md border border-orange/60 bg-white p-2.5 pt-4">
+              <p class="block-label absolute left-3 top-0 rounded-md bg-orange px-2.5 py-0.5 map-label font-black text-white">6　めざす学びの姿</p>
+              <div class="map-stack-list">
+                <div class="rounded-md border border-orange/25 bg-paper px-2 py-1.5 map-list font-bold text-ink"><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-7h6v7"/></svg></span><span class="map-list-text">地域に親しむ</span></div>
+                <div class="rounded-md border border-orange/25 bg-paper px-2 py-1.5 map-list font-bold text-ink"><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M12 14h.01"/><path d="M12 7a2.4 2.4 0 0 1 1.4 4.3c-.8.5-1.4 1-1.4 2"/></svg></span><span class="map-list-text">自ら問いをもつ</span></div>
+                <div class="rounded-md border border-orange/25 bg-paper px-2 py-1.5 map-list font-bold text-ink"><span class="map-row-icon"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M4 21c.6-4 3-6 6-6"/><path d="M20 21c-.6-4-3-6-6-6"/></svg></span><span class="map-list-text">友達と学び合う</span></div>
+                <div class="rounded-md border border-orange/25 bg-paper px-2 py-1.5 map-list font-bold text-ink"><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 17v-5"/><path d="M12 17V8"/><path d="M16 17v-8"/></svg></span><span class="map-list-text">学びを深める</span></div>
+                <div class="rounded-md border border-orange/25 bg-paper px-2 py-1.5 map-list font-bold text-ink"><span class="map-row-icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg></span><span class="map-list-text">地域と自分の関わりを考える</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-anchor section-stack grid grid-gap lg:grid-cols-2 lg:items-start">
+      <div class="section-pad rounded-md border border-line bg-white shadow-calm">
+        <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Means</p>
+        <h2 class="mt-2 text-3xl font-black text-ink">5つの手立て</h2>
+        <div class="mt-[var(--space-tight)] grid gap-[var(--space-tight)]">
+          <div class="card-pad rounded-md border border-line bg-paper"><strong>1. 地域や学校の本物と出合う場をつくる</strong><p class="mt-1 text-sm leading-6 text-neutral-700">実感を伴った疑問や関心が生まれる出合い方を設計する。</p></div>
+          <div class="card-pad rounded-md border border-line bg-paper"><strong>2. 素朴な問いを磨く時間を確保する</strong><p class="mt-1 text-sm leading-6 text-neutral-700">すぐ調べず、何が気になるのか、なぜ調べたいのかを整理する。</p></div>
+          <div class="card-pad rounded-md border border-line bg-paper"><strong>3. 探究の過程を意識した学習活動を設定する</strong><p class="mt-1 text-sm leading-6 text-neutral-700">課題設定、情報収集、整理・分析、まとめ・表現を意識する。</p></div>
+          <div class="card-pad rounded-md border border-line bg-paper"><strong>4. 学び方を具体的に支える</strong><p class="mt-1 text-sm leading-6 text-neutral-700">問いの立て方、調べ方、比べ方、整理の仕方、振り返り方を支える。</p></div>
+          <div class="card-pad rounded-md border border-line bg-paper"><strong>5. 振り返り、次の学びにつなげる場を設ける</strong><p class="mt-1 text-sm leading-6 text-neutral-700">分かったこと、考えが変わったこと、次に考えたいことを残す。</p></div>
+        </div>
+      </div>
+      <div class="section-pad rounded-md border border-line bg-white shadow-calm">
+        <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Checkpoints</p>
+        <h2 class="mt-2 text-3xl font-black text-ink">検証の視点</h2>
+        <ol class="mt-[var(--space-tight)] grid gap-[var(--space-tight)]">
+          <li class="card-pad rounded-md border border-line bg-paper"><strong>地域や学校との出合いから問いをもつことができたか。</strong></li>
+          <li class="card-pad rounded-md border border-line bg-paper"><strong>問いは深まり、変容しているか。</strong></li>
+          <li class="card-pad rounded-md border border-line bg-paper"><strong>学びを自分事として捉えているか。</strong></li>
+          <li class="card-pad rounded-md border border-line bg-paper"><strong>友達との関わりを通して学びを深めているか。</strong></li>
+          <li class="card-pad rounded-md border border-line bg-paper"><strong>振り返りを通して、学びの深まりを自覚しているか。</strong></li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="practices" class="section-anchor section-stack section-pad rounded-md border border-line bg-white shadow-calm">
+      <div class="mb-[var(--space-tight)] flex flex-col justify-between tight-gap lg:flex-row lg:items-end">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Practice</p>
+          <h2 class="text-3xl font-black text-ink">実践を見る</h2>
+        </div>
+        <p class="max-w-3xl text-sm leading-6 text-neutral-700">学年別・教科領域別に、校内実践やウェブ上の実践へアクセスするための入口です。</p>
+      </div>
+      <div id="practiceLinks" class="practice-grid link-grid grid grid-gap"></div>
+    </section>
+
+    <section id="discussion" class="section-anchor section-stack section-pad rounded-md border border-line bg-white shadow-calm">
+      <div class="grid grid-gap lg:grid-cols-[0.85fr_1.15fr]">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Discussion</p>
+          <h2 class="mt-2 text-3xl font-black text-ink">研究授業</h2>
+          <p class="mt-4 leading-8 text-neutral-700">
+            研究授業では、学習指導案をもとに授業のねらいや手立てを共有し、協議記録とIFSまとめを次の授業づくりへつなげます。
+          </p>
+          <div class="mt-[var(--space-tight)] card-pad rounded-md border border-line bg-paper">
+            <h3 class="font-black text-ink">協議の見方</h3>
+            <p class="mt-2 text-sm leading-6 text-neutral-700">出合い、問いの変化、自分事、対話、振り返りを手がかりに、次の授業づくりへつなげます。</p>
+          </div>
+        </div>
+        <div id="discussionLinks" class="link-grid grid grid-gap md:grid-cols-3"></div>
+      </div>
+    </section>
+
+    <section id="exchange" class="section-anchor section-stack section-pad rounded-md border border-line bg-white shadow-calm">
+      <div class="mb-[var(--space-tight)] flex flex-col justify-between tight-gap lg:flex-row lg:items-end">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-orangeDark">Research Hub</p>
+          <h2 class="text-3xl font-black text-ink">研究推進資料</h2>
+        </div>
+        <p class="max-w-3xl text-sm leading-6 text-neutral-700">研究推進委員会で参照する資料、各学年の実践一覧、研究全体会で共有した資料をまとめます。</p>
+      </div>
+      <div id="exchangeLinks" class="link-grid grid grid-gap md:grid-cols-3"></div>
+    </section>
+
+    <section id="lecture-notes" class="lecture-panel section-anchor section-stack section-pad rounded-md border border-line bg-ink text-paper shadow-calm">
+      <div class="grid grid-gap lg:grid-cols-[0.86fr_1.14fr] lg:items-stretch">
+        <div class="flex flex-col justify-between gap-[var(--space-grid)]">
+          <div>
+            <p class="text-sm font-black uppercase tracking-[0.18em] text-orange">Lecture Notes</p>
+            <h2 class="mt-2 text-3xl font-black">講師の先生の話をまとめる</h2>
+            <p class="mt-4 leading-8 text-neutral-100">
+              研究全体会や協議会での講師の先生の助言を、録音、文字起こし、AI要約を通して整理し、次の授業づくりに生かします。
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <button class="inline-flex items-center justify-center rounded-md bg-yellow-400 px-6 py-4 text-base font-black text-ink shadow-calm transition hover:bg-yellow-300" type="button">
+              指導講評まとめ
+            </button>
+            <span class="rounded-md border border-white/15 px-4 py-3 text-sm font-black text-white/75">O(G)AKU 3G探9</span>
+          </div>
+        </div>
+        <div class="grid grid-gap md:grid-cols-3">
+          <div class="card-pad rounded-md border border-white/20 bg-white/8">
+            <p class="text-sm font-black text-orange">01</p>
+            <h3 class="mt-2 text-xl font-black text-white">録音する</h3>
+            <p class="mt-3 leading-7 text-neutral-100">講師の先生の助言や質疑を残し、あとで聞き返せる材料にする。</p>
+          </div>
+          <div class="card-pad rounded-md border border-white/20 bg-white/8">
+            <p class="text-sm font-black text-orange">02</p>
+            <h3 class="mt-2 text-xl font-black text-white">文字起こしする</h3>
+            <p class="mt-3 leading-7 text-neutral-100">発言内容をテキスト化し、研究主題や手立てと照らして読み返せる形にする。</p>
+          </div>
+          <div class="card-pad rounded-md border border-white/20 bg-white/8">
+            <p class="text-sm font-black text-orange">03</p>
+            <h3 class="mt-2 text-xl font-black text-white">AIで要約する</h3>
+            <p class="mt-3 leading-7 text-neutral-100">助言の要点、次に試したいこと、校内で共有したい視点を短く整理する。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="section-stack border-t border-line bg-paper">
+    <div class="mx-auto flex max-w-7xl flex-col gap-[var(--space-tight)] px-[var(--space-page)] py-[var(--space-section)] text-sm text-neutral-600">
+      <p class="font-black text-ink">令和8年度 尾久小学校 校内研究ポータル</p>
+      <p>研究構想、実践、協議、講師の先生からの助言をつなぎ、日々の授業づくりに生かしていくための共有スペースです。</p>
+    </div>
+  </footer>
+
+  <script>
+    const linkTargets = {
+      discussion: document.getElementById('discussionLinks'),
+      practices: document.getElementById('practiceLinks'),
+      exchange: document.getElementById('exchangeLinks')
+    };
+
+    function createLinkCard(item) {
+      const card = document.createElement('a');
+      const isPlaceholder = item.url === '#';
+      card.href = item.url;
+      card.dataset.status = isPlaceholder ? 'placeholder' : 'ready';
+      card.className = 'link-card card-pad block rounded-md border border-line bg-paper transition hover:-translate-y-0.5 hover:border-orange hover:bg-white hover:shadow-calm';
+      if (!isPlaceholder) {
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+      }
+      card.innerHTML = `
+        <div class="flex items-center justify-between gap-3">
+          <span class="rounded-md bg-white px-2.5 py-1 text-xs font-black text-orangeDark">${item.type}</span>
+          ${isPlaceholder ? `
+            <span class="flex items-center gap-1.5 text-xs font-black text-neutral-600">
+              <span class="status-dot h-2 w-2 rounded-full bg-neutral-400"></span>
+              URL未設定
+            </span>
+          ` : ''}
+        </div>
+        <div class="link-card-body">
+          <h3 class="mt-4 text-lg font-black text-ink">${item.title}</h3>
+          <p class="text-sm leading-6 text-neutral-700">${item.detail}</p>
+        </div>
+      `;
+      card.addEventListener('click', (event) => {
+        if (isPlaceholder) {
+          event.preventDefault();
+          showNotice('このリンクは仮設定です。実際のURLを portalLinks に入れると開けるようになります。');
+        }
+      });
+      return card;
+    }
+
+    Object.entries(linkTargets).forEach(([key, target]) => {
+      portalLinks[key].forEach((item) => target.appendChild(createLinkCard(item)));
+    });
+
+    const notice = document.createElement('div');
+    notice.className = 'no-print fixed bottom-5 left-1/2 z-50 hidden w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-md bg-ink px-5 py-4 text-sm font-bold leading-6 text-paper shadow-calm';
+    document.body.appendChild(notice);
+
+    let noticeTimer;
+    function showNotice(message) {
+      clearTimeout(noticeTimer);
+      notice.textContent = message;
+      notice.classList.remove('hidden');
+      noticeTimer = setTimeout(() => notice.classList.add('hidden'), 3200);
+    }
+
+    const summaryButton = document.getElementById('summaryButton');
+    const summaryPanel = document.getElementById('summaryPanel');
+    summaryButton.addEventListener('click', () => {
+      const isHidden = summaryPanel.classList.toggle('hidden');
+      summaryButton.setAttribute('aria-expanded', String(!isHidden));
+      summaryButton.textContent = isHidden ? '1分説明を表示' : '1分説明を閉じる';
+    });
+
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuButton.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.toggle('hidden');
+      mobileMenuButton.setAttribute('aria-expanded', String(!isHidden));
+    });
+    mobileMenu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+    const sections = navLinks
+      .map((link) => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`);
+        });
+      });
+    }, { rootMargin: '-30% 0px -58% 0px', threshold: 0.01 });
+
+    sections.forEach((section) => observer.observe(section));
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealTargets = Array.from(document.querySelectorAll([
+      'main > section',
+      'footer',
+      '#hub-title + p',
+      'article',
+      '.link-card',
+      '#board .research-board'
+    ].join(',')));
+
+    revealTargets.forEach((element, index) => {
+      element.classList.add('scroll-reveal');
+      if (index % 3 === 1) element.classList.add('reveal-left');
+      if (index % 3 === 2) element.classList.add('reveal-right');
+      element.style.setProperty('--reveal-delay', `${Math.min(index % 6, 5) * 45}ms`);
+    });
+
+    if (prefersReducedMotion) {
+      revealTargets.forEach((element) => element.classList.add('is-visible'));
+    } else {
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+
+      revealTargets.forEach((element) => revealObserver.observe(element));
+    }
+  </script>
+</body>
+</html>
